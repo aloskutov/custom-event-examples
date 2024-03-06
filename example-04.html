@@ -1,0 +1,55 @@
+// Dispatching a custom event when the selected date changes
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <title>Date Picker with Custom Event</title>
+</head>
+<body>
+
+<!-- Поле ввода даты -->
+<input type="text" id="datePicker" placeholder="Select a date">
+
+<!-- Другой компонент, прослушивающий событие изменения выбранной даты -->
+<div id="otherComponent">
+  <p>Waiting for the selected date to change...</p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Инициализация выбора даты flatpickr
+  const datePicker = flatpickr("#datePicker", {
+    onChange: function(selectedDates, dateStr) {
+      // Диспетчеризация пользовательского события при изменении выбранной даты
+      const selectedDateChangeEvent = new CustomEvent('selectedDateChange', {
+        detail: {
+          selectedDate: dateStr,
+          timestamp: new Date().toLocaleString()
+        }
+      });
+
+      // Отправка пользовательского события
+      document.dispatchEvent(selectedDateChangeEvent);
+    }
+  });
+
+  // Пример слушателя событий реагируещего на пользовательское событие
+  document.addEventListener('selectedDateChange', function(event) {
+    // Другие компоненты могут изменять свое состояние или выполнять действия здесь
+    console.log('Selected date has changed!', event.detail);
+
+    // Обновление текстового содержимого другого компонента
+    const otherComponent = document.getElementById('otherComponent');
+    otherComponent.innerHTML = `
+      <p>Selected date is now: ${event.detail.selectedDate}</p>
+      <p>Last updated at: ${event.detail.timestamp}</p>
+    `;
+  });
+});
+</script>
+
+</body>
+</html>

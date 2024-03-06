@@ -1,0 +1,100 @@
+// Dispatching a custom event when a modal is opened
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Стиль для модального окна */
+    #modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    /* Стили для оверлея */
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    /* Стили для других компонентов, способных изменять свое состояние */
+    .other-component {
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+  <title>Custom Event Modal Example</title>
+</head>
+<body>
+
+<!-- Кнопка открытия модального окна -->
+<button id="openModalButton">Open Modal</button>
+
+<!-- Модальное окно и оверлей -->
+<div id="overlay"></div>
+<div id="modal">
+  <p>This is the modal content.</p>
+  <button id="closeModalButton">Close Modal</button>
+</div>
+
+<!-- Другие компоненты, способные изменять своё состояние -->
+<div class="other-component" id="component1">Component 1</div>
+<div class="other-component" id="component2">Component 2</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const openModalButton = document.getElementById('openModalButton');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const modal = document.getElementById('modal');
+    const overlay = document.getElementById('overlay');
+    const component1 = document.getElementById('component1');
+    const component2 = document.getElementById('component2');
+
+    // Пользовательское событие, уведомляющее другие компоненты об открытии модального окна
+    const modalOpenedEvent = new CustomEvent('modalOpened');
+
+    // Функция открытия модального окна и уведомления других компонентов
+    function openModal() {
+      modal.style.display = 'block';
+      overlay.style.display = 'block';
+
+      // Отправка пользовательского события для уведомления других компонентов
+      document.dispatchEvent(modalOpenedEvent);
+    }
+
+    // Функция закрытия модального окна
+    function closeModal() {
+      modal.style.display = 'none';
+      overlay.style.display = 'none';
+    }
+
+    // Слушатель событий для кнопки открытия модального окна
+    openModalButton.addEventListener('click', openModal);
+
+    // Слушатель событий для кнопки закрытия модального окна
+    closeModalButton.addEventListener('click', closeModal);
+
+    // Слушатель события для пользовательского события изменения состояния других компонентов
+    document.addEventListener('modalOpened', function() {
+      // Настройка состояния или выполнение необходимых действий в других компонентах
+      component1.innerText = 'Component 1 - Modal Opened';
+      component2.innerText = 'Component 2 - Modal Opened';
+    });
+  });
+</script>
+
+</body>
+</html>
